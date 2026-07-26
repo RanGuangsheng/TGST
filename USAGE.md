@@ -264,33 +264,4 @@ python scripts/experiment_v2.py \
 | Baseline | 112,964 | 112,964 |
 | TGST | 102,446,852 | 179,204（BERT冻结） |
 
-## 七、自定义扩展
 
-### 7.1 添加新故障类别
-
-1. 在 `data/cwru_v2.py` 的 `CWRU_FILES` 添加新类别的 .mat 文件映射
-2. 在 `data/text_generator_v3.py` 的 `FEATURE_POOL` 添加新类别的特征描述词库
-3. 更新 `CLASS_NAMES` 列表
-4. 运行扩展实验：
-```bash
-python scripts/experiment_v2.py --mode tgst --extend --n_classes 5 --load_model checkpoints/tgst_best.pth
-```
-
-### 7.2 调整文本生成策略
-
-编辑 `data/text_generator_v3.py`：
-- `FEATURE_POOL`：修改各类的特征维度和同义词
-- `SENTENCE_TEMPLATES`：修改句式模板
-- `generate_text_for_label()`：调整特征选取逻辑
-
-### 7.3 使用其他数据集
-
-替换 `data/cwru_v2.py` 中的数据加载逻辑，保持接口一致：
-```python
-class YourDataset(Dataset):
-    def __init__(self, root, classes, n_samples_per_class, segment_length, ...):
-        # 加载你的数据
-        # 生成文本: self.texts = generate_unique_texts(self.labels.tolist())
-    def __getitem__(self, idx):
-        return signal, label, text  # 接口不变
-```
